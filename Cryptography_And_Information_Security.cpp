@@ -42,21 +42,6 @@ void ConvertToBits(string arr[],int count,string* &bitArr){
 	}
 }
 
-void keyVerification(string& key){
-	if(key.size()>8){
-		string temp="";
-		temp=key.substr(0, 8);
-	}else if(key.size()<8){
-		string Padding="TUVWXYZ";
-		for(int k=key.size();k<=8;k++)key+=Padding[k-1];
-	}
-	string keyBits = "";
-	for(char c:key) {
-    	keyBits+=bitset<8>(c).to_string();
-    }
-	generateKeys(key);
-}
-
 int PC1[56]={
     57,49,41,33,25,17,9,
     1,58,50,42,34,26,18,
@@ -105,6 +90,21 @@ void generateKeys(string key64){
     }
 }
 
+void keyVerification(string& key){
+	if(key.size()>8){
+		string temp="";
+		temp=key.substr(0, 8);
+	}else if(key.size()<8){
+		string Padding="TUVWXYZ";
+		for(int k=key.size();k<=8;k++)key+=Padding[k-1];
+	}
+	string keyBits = "";
+	for(char c:key) {
+    	keyBits+=bitset<8>(c).to_string();
+    }
+	generateKeys(key);
+}
+
 string initialPermutation(const string &input64){
     int IP[64]={
         58,50,42,34,26,18,10,2,
@@ -137,12 +137,55 @@ string finalPermutation(const string &input64){
     return output;
 }
 
-string function(string& right,int& roundNo){
-
+void ExpansionBox(string& right){
+    int idx=0,size=right.size();
+    string currbits="";
+    currbits+=right[size-1];
+    while(idx<size){
+        for(int i=0;i<4;i++){
+            currbits+=right[idx];
+            idx++;
+        }
+        if(idx<size-1){
+            currbits+=right[idx];
+            currbits+=right[idx-1];
+        }else currbits+=right[0];
+    }
+    cout<<currbits;
 }
 
 string XOR(string& left,string& right){
+    string xorBit="";
+    for(int i=0;i<left.size();i++){
+        if(left[i]==right[i])xorBit+="0";
+        else xorBit+="1";
+    }
+    return xorBit;
+}
 
+string SBOX(string& bits){
+    int i=0;
+    string curr="";
+    while(i<bits.size()){
+        for(int j=i;j<i+6;j++)curr+=bits[j];
+        string column="",row="";
+        row+=curr[0];
+        row+=curr[5];
+        column=curr.substr(1,4);
+        i+=6;
+    }
+    return "";
+}
+
+string permutation(string& bits){
+    return "";
+}
+
+string function(string& right,int& roundNo){
+    ExpansionBox(right);
+    string output=XOR(right,roundKeys[roundNo]);
+    string output2=SBOX(output);
+    return permutation(output2);
 }
 
 string performRounds(string& currBits){
@@ -160,11 +203,15 @@ string performRounds(string& currBits){
 	return left+right;
 }
 
+string Swapping(){
+    return "";
+}
+
 void performDES(string& currBits){
 	string step1=initialPermutation(currBits);
 	string step2=performRounds(step1);
-	string step3;
-	string step4;
+	string step3=Swapping();
+	string step4=finalPermutation(step3);
 }
 
 void DES(string& msg,string& key){
@@ -184,13 +231,14 @@ void DES(string& msg,string& key){
 }
 
 int main(){
-	string msg="",key="",Ent;
-	cout<<"Enter the Massage: ";
-    getline(cin, msg);
-	cout<<"Enter the Key: ";
-	cin>>key;
+	// string msg="",key="",Ent;
+	// cout<<"Enter the Massage: ";
+    // getline(cin, msg);
+	// cout<<"Enter the Key: ";
+	// cin>>key;
 
-	DES(msg,key);
-	return 0;
+	// DES(msg,key);
+    string str="123456";
+    SBOX(str);
 }
 // before the Inverse permutation is there any swapping??
