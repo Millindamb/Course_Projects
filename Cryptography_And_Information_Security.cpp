@@ -8,6 +8,16 @@ using namespace std;
 //.\crypto
 string* roundKeys;
 
+string hexToAscii(string hex) {
+    string out = "";
+    for (int i = 0; i < hex.length(); i += 2) {
+        string byte = hex.substr(i, 2);
+        char chr = (char) strtol(byte.c_str(), nullptr, 16);
+        out += chr;
+    }
+    return out;
+}
+
 void removeSpace(string msg,string* &arr,int& count){
 	int idx=0;
 	string modefied="",curr="";
@@ -30,8 +40,6 @@ void removeSpace(string msg,string* &arr,int& count){
 }
 
 void ConvertToBits(string arr[],int count,string* &bitArr){
-	string Padding="TUVWXYZ";
-	for(int k=arr[count-1].length();k<=8;k++)arr[count-1]+=Padding[k-1];
 	bitArr=new string[count];
 	for(int i=0;i<count;i++){
 		string bits = "";
@@ -79,7 +87,7 @@ void generateKeys(string key64){
     string C=key56.substr(0,28);
     string D=key56.substr(28,28);
 
-    for (int r = 0; r < 16; r++) {
+    for(int r=0;r<16;r++){
 		C=leftShift(C,SHIFTS[r]);
         D=leftShift(D,SHIFTS[r]);
         string CD=C+D;
@@ -93,16 +101,19 @@ void generateKeys(string key64){
 void keyVerification(string& key){
 	if(key.size()>8){
 		string temp="";
-		temp=key.substr(0, 8);
+		key=key.substr(0,8);
 	}else if(key.size()<8){
 		string Padding="TUVWXYZ";
-		for(int k=key.size();k<=8;k++)key+=Padding[k-1];
+		int L=key.size();
+        for(int k=L;k<8;k++){
+            key+=Padding[k-L];
+        }
 	}
 	string keyBits = "";
 	for(char c:key) {
     	keyBits+=bitset<8>(c).to_string();
     }
-	generateKeys(key);
+	generateKeys(keyBits);
 }
 
 string initialPermutation(const string &input64){
@@ -137,24 +148,24 @@ string finalPermutation(const string &input64){
     return output;
 }
 
-void ExpansionBox(string& right){
-    int idx=0,size=right.size();
+string ExpansionBox(string& right){
+    int E[48]={
+        32,1,2,3,4,5,
+        4,5,6,7,8,9,
+        8,9,10,11,12,13,
+        12,13,14,15,16,17,
+        16,17,18,19,20,21,
+        20,21,22,23,24,25,
+        24,25,26,27,28,29,
+        28,29,30,31,32,1
+    };
+
     string currbits="";
-    currbits+=right[size-1];
-    while(idx<size){
-        for(int i=0;i<4;i++){
-            currbits+=right[idx];
-            idx++;
-        }
-        if(idx<size-1){
-            currbits+=right[idx];
-            currbits+=right[idx-1];
-        }else currbits+=right[0];
-    }
-    cout<<currbits;
+    for(int i=0;i<48;i++)currbits+=right[E[i]-1];
+    return currbits;
 }
 
-string XOR(string& left,string& right){
+string XOR(const string& left,const string& right){
     string xorBit="";
     for(int i=0;i<left.size();i++){
         if(left[i]==right[i])xorBit+="0";
@@ -235,12 +246,26 @@ string SBOX(string& bits){
 }
 
 string permutation(string& bits){
-    return "";
+    int P[32] = {
+        16,7,20,21,
+        29,12,28,17,
+        1,15,23,26,
+        5,18,31,10,
+        2,8,24,14,
+        32,27,3,9,
+        19,13,30,6,
+        22,11,4,25
+    };
+    string result="";
+    for(int i=0;i<32;i++){
+        result+=bits[P[i]-1];
+    }
+    return result;
 }
 
 string function(string& right,int& roundNo){
-    ExpansionBox(right);
-    string output=XOR(right,roundKeys[roundNo]);
+    string Expended=ExpansionBox(right);
+    string output=XOR(Expended,roundKeys[roundNo]);
     string output2=SBOX(output);
     return permutation(output2);
 }
@@ -249,53 +274,74 @@ string performRounds(string& currBits){
 	string left=currBits.substr(0,32);
     string right=currBits.substr(32,32);
 	int roundNo=0;
-	for(int i=0;i<8;i++){
+	for(int i=0;i<16;i++){
 		string output=function(right,roundNo);
 		string output2=XOR(left,output);
+        if(i!=15){
+            left=right;
+            right=output2;
+        }else{
+            left=left;
+            right=output2;
+        }
 		roundNo++;
-		string output3=function(output2,roundNo);
-		string right=XOR(right,output3);
-		left=output2;
 	}
-	return left+right;
+	return right + left;
 }
 
-string Swapping(){
-    return "";
-}
 
-void performDES(string& currBits){
+string performDES(string& currBits){
 	string step1=initialPermutation(currBits);
 	string step2=performRounds(step1);
-	string step3=Swapping();
-	string step4=finalPermutation(step3);
+	string step3=finalPermutation(step2);
+    return step3;
 }
 
-void DES(string& msg,string& key){
+string ConvertToCipherText(string& bits){
+    string curr="";
+    string result="";
+    for(int i=0;i<64;i+=8){
+        curr=bits.substr(i,8);
+        int val=bitset<8>(curr).to_ulong();
+        char hex[3];
+        sprintf(hex, "%02X", val); 
+        result += hex;
+    }
+    return result;
+}
+
+string DES(string& msg,string& key){
 	int count=0;
+    string result="";
 	string* arr;
 	string* bitArr;
-
+    
 	keyVerification(key);
 
 	removeSpace(msg,arr,count);
 
     ConvertToBits(arr,count,bitArr);
 
+    string cipherBits[count],ciphertext[count];
+
 	for(int i=0;i<count;i++){
-		performDES(arr[count]);
+		cipherBits[i]=performDES(bitArr[i]);
+        ciphertext[i]=ConvertToCipherText(cipherBits[i]);
+        result+=ciphertext[i];
 	}
+    return result;
 }
 
 int main(){
-	// string msg="",key="",Ent;
-	// cout<<"Enter the Massage: ";
-    // getline(cin, msg);
-	// cout<<"Enter the Key: ";
-	// cin>>key;
+	string msg="",key="",Ent;
+	cout<<"Enter the Massage: ";
+    getline(cin,msg);
+	cout<<"Enter the Key: ";
+	cin>>key;
 
-	// DES(msg,key);
-    string topass="100001";
-    cout<<SBOX(topass);
+    msg = hexToAscii(msg);
+    key = hexToAscii(key);
+
+	string ciperText=DES(msg,key);
+    cout<<ciperText;
 }
-// before the Inverse permutation is there any swapping??
