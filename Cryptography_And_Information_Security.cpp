@@ -8,16 +8,6 @@ using namespace std;
 //.\crypto
 string* roundKeys;
 
-string hexToAscii(string hex) {
-    string out = "";
-    for (int i = 0; i < hex.length(); i += 2) {
-        string byte = hex.substr(i, 2);
-        char chr = (char) strtol(byte.c_str(), nullptr, 16);
-        out += chr;
-    }
-    return out;
-}
-
 void removeSpace(string msg,string* &arr,int& count){
 	int idx=0;
 	string modefied="",curr="";
@@ -31,15 +21,16 @@ void removeSpace(string msg,string* &arr,int& count){
         curr+=modefied[j];
 		if(curr.length()==8){
 			arr[idx++]=curr;
-			curr="";
+            curr="";
 		}
 	}
-
 	if(curr.length()>0)arr[idx]=curr;
-
 }
 
-void ConvertToBits(string arr[],int count,string* &bitArr){
+void ConvertToBits(string arr[],int& count,string* &bitArr){
+	string Padding="TUVWXYZ";
+    int L=arr[count-1].length();
+    for(int k=L;k<8;k++)arr[count-1]+=Padding[k-L];
 	bitArr=new string[count];
 	for(int i=0;i<count;i++){
 		string bits = "";
@@ -47,7 +38,7 @@ void ConvertToBits(string arr[],int count,string* &bitArr){
         	bits+=bitset<8>(c).to_string();
     	}
 		bitArr[i]=bits;
-	}
+    }
 }
 
 int PC1[56]={
@@ -297,22 +288,23 @@ string performDES(string& currBits){
     return step3;
 }
 
-string ConvertToCipherText(string& bits){
+string ConvertToCipherText(string& bits,string& result,string& result2){
     string curr="";
-    string result="";
     for(int i=0;i<64;i+=8){
         curr=bits.substr(i,8);
+        char ch=(char)bitset<8>(curr).to_ulong(); 
+        result+=ch;
+
         int val=bitset<8>(curr).to_ulong();
         char hex[3];
-        sprintf(hex, "%02X", val); 
-        result += hex;
+        sprintf(hex,"%02X",val);
+        result2+=hex;
     }
     return result;
 }
 
-string DES(string& msg,string& key){
+void DES(string& msg,string& key,string& result,string& result2){
 	int count=0;
-    string result="";
 	string* arr;
 	string* bitArr;
     
@@ -326,22 +318,24 @@ string DES(string& msg,string& key){
 
 	for(int i=0;i<count;i++){
 		cipherBits[i]=performDES(bitArr[i]);
-        ciphertext[i]=ConvertToCipherText(cipherBits[i]);
-        result+=ciphertext[i];
+        ciphertext[i]=ConvertToCipherText(cipherBits[i],result,result2);
 	}
-    return result;
 }
 
 int main(){
-	string msg="",key="",Ent;
+	string msg="",key="",Ent,result,result2;
 	cout<<"Enter the Massage: ";
     getline(cin,msg);
 	cout<<"Enter the Key: ";
 	cin>>key;
 
-    msg = hexToAscii(msg);
-    key = hexToAscii(key);
+	DES(msg,key,result,result2);
+    cout<<"===== DES Encryption Output =====\n";
+    cout<<"Cipher Text (Raw Characters):\n";
+    cout<<result<<endl;
 
-	string ciperText=DES(msg,key);
-    cout<<ciperText;
+    cout<<"Cipher Text(Hexadecimal Representation):\n";
+    cout<<result2<<endl;
+
+    cout<<"=================================\n";
 }
