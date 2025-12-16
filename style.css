@@ -1,0 +1,260 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial,Helvetica,sans-serif;
+}
+
+body{
+    height: 100vh;
+    background: linear-gradient(135deg,#e3f2fd,#f5f7fa);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container{
+    background: #ffffff;
+    width: 420px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.heading{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.Mode{
+    display: none;
+}
+
+.buttons{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.buttons button{
+    width: 48%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    background: #e0e0e0;
+    transition: 0.3s;
+}
+
+.buttons button:hover{
+    background: #3f51b5;
+    color: #fff;
+}
+
+.inputs>div{
+    margin-bottom: 15px;
+}
+
+.inputs p{
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.inputs input[type="text"]{
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+}
+
+.inputs input[type="text"]:focus{
+    border-color: #3f51b5;
+}
+
+.select>select{
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+}
+
+.image{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.image1,.image2,.image3{
+    border-radius: 15px;
+}
+
+.image .image2,.image .image3{
+    display:none;
+}
+
+.upload-box{
+    border: 2px dashed #bdbdbd;
+    border-radius: 10px;
+    height: 180px;
+    display: flex;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+    background-color: #fafafa;
+    text-align: center;
+}
+
+.upload-box2{
+    border: 2px dashed #bdbdbd;
+    border-radius: 10px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+    background-color: #fafafa;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.part2{
+    display: none;
+}
+
+.inputs2 input[type="text"]{
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+}
+
+.input2s>div{
+    margin-bottom: 15px;
+}
+
+.inputs2 p{
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.upload-box:hover{
+    border-color: #3f51b5;
+    background-color: #f0f4ff;
+}
+
+.upload-icon{
+    width: 150px;
+    margin-bottom: 10px;
+    opacity: 0.85;
+}
+
+.upload-box span{
+    color: #3f51b5;
+    font-size: 14px;
+}
+
+.GenerateBtn,.GenerateBtn2{
+    margin-top: 20px;
+}
+
+.GenerateBtn button,.GenerateBtn2 button{
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    background: #3f51b5;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.GenerateBtn button:hover,.GenerateBtn2 button:hover{
+    background: #303f9f;
+}
+
+.upload-status{
+    margin-top: 10px;
+    font-size: 14px;
+    min-height: 20px;
+    color: #666;
+}
+
+.uploaded-preview{
+    display: block;
+    max-width: 100%;
+    max-height: 200px;
+    margin-top: 15px;
+    border-radius: 10px;
+    border: 2px solid #3f51b5;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.image>img{
+    margin-top: 15px;
+}
+
+.Result,.result2{
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    min-height: 60px;
+}
+
+.Result p{
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.Result img{
+    display: block;
+    max-width: 100%;
+    max-height: 200px;
+    margin: 10px auto;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.download-link:hover{
+    background: #45a049;
+}
+
+.result2{
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.upload-box span{
+    display: block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: #e8f5e9;
+    border-radius: 5px;
+    color: #2e7d32;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.after-uploading2{
+    margin-bottom: 10px;
+}

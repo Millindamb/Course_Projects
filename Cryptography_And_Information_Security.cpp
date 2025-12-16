@@ -7,12 +7,25 @@ using namespace std;
 //g++ Cryptography_And_Information_Security.cpp -o crypto
 //.\crypto
 string* roundKeys;
+int pad,*spaces,s;
 
 void removeSpace(string msg,string* &arr,int& count){
 	int idx=0;
 	string modefied="",curr="";
 
-	for(char c:msg)if(c!=' ')modefied+=c;
+	for(char c:msg){
+        if(c!=' ')modefied+=c;
+        else s++;
+    }
+
+    int j=0;
+    spaces=new int[s];
+    for(int i=0;i<msg.size();i++){
+        if(msg[i]==' '){
+            spaces[j]=i;
+            j++;
+        }
+    }
     count=modefied.size()/8;
     if(modefied.size()%8!=0)count++;
 
@@ -29,6 +42,8 @@ void removeSpace(string msg,string* &arr,int& count){
 
 void ConvertToBits(string arr[],int& count,string* &bitArr){
 	string Padding="TUVWXYZ";
+    pad=8-arr[count-1].size();
+    cout<<"padding is : "<<pad<<endl;
     int L=arr[count-1].length();
     for(int k=L;k<8;k++)arr[count-1]+=Padding[k-L];
 	bitArr=new string[count];
@@ -303,10 +318,8 @@ string ConvertToCipherText(string& bits,string& result,string& result2){
     return result;
 }
 
-void DES(string& msg,string& key,string& result,string& result2){
-	int count=0;
+void DES(int& count,string* &bitArr,string& msg,string& key,string& result,string& result2,string* &cipherBits){
 	string* arr;
-	string* bitArr;
     
 	keyVerification(key);
 
@@ -314,7 +327,8 @@ void DES(string& msg,string& key,string& result,string& result2){
 
     ConvertToBits(arr,count,bitArr);
 
-    string cipherBits[count],ciphertext[count];
+    cipherBits=new string[count];
+    string ciphertext[count];
 
 	for(int i=0;i<count;i++){
 		cipherBits[i]=performDES(bitArr[i]);
@@ -322,14 +336,33 @@ void DES(string& msg,string& key,string& result,string& result2){
 	}
 }
 
+string DES_decryption(string& cipherText,string* &bitArr,string* &cipherbits,int count){
+    string curr="",result;
+    for(int i=0;i<count;i++)curr+=cipherbits[i];
+    for(int i=0;i<count;i++){
+        string currStr="";
+        for(int j=0;j<64;j+=8){
+            string currBits=bitArr[i].substr(j,8);
+            char ch = (char)bitset<8>(currBits).to_ulong();
+            currStr+=ch;
+        }
+        result+=currStr;
+    }
+    int len=result.size();
+    result=result.substr(0,len-pad);
+    for(int i=0;i<s;i++)result.insert(spaces[i]," ");
+    return result;
+}
+
 int main(){
-	string msg="",key="",Ent,result,result2;
+    int count=0;
+	string msg="",key="",Ent,result,result2,*cipherBits,*bitArr;
 	cout<<"Enter the Massage: ";
     getline(cin,msg);
 	cout<<"Enter the Key: ";
 	cin>>key;
 
-	DES(msg,key,result,result2);
+	DES(count,bitArr,msg,key,result,result2,cipherBits);
     cout<<"===== DES Encryption Output =====\n";
     cout<<"Cipher Text (Raw Characters):\n";
     cout<<result<<endl;
@@ -338,4 +371,5 @@ int main(){
     cout<<result2<<endl;
 
     cout<<"=================================\n";
+    cout<<DES_decryption(result,bitArr,cipherBits,count);
 }
