@@ -336,14 +336,46 @@ void DES(int& count,string* &bitArr,string& msg,string& key,string& result,strin
 	}
 }
 
+string performRounds_Decryption(string& currBits){
+    string left=currBits.substr(0,32);
+    string right=currBits.substr(32,32);
+
+    for(int i=15;i>=0;i--){
+        string temp=left;
+        string f_output=function(left,i);
+        left=XOR(right,f_output);
+        right=temp;
+    }
+    return left+right;
+}
+
+string performDES_Decryption(string& cipherBits){
+    string step1=initialPermutation(cipherBits);
+    string step2=performRounds_Decryption(step1);
+    string step3=finalPermutation(step2);
+    return step3;
+}
+
+string ConvertBitsToText(string& bits){
+    string result="";
+    for(int i=0;i<64;i+=8){
+        string byte=bits.substr(i,8);
+        char ch=(char)bitset<8>(byte).to_ulong();
+        result += ch;
+    }
+    return result;
+}
+
+
 string DES_decryption(string& cipherText,string* &bitArr,string* &cipherbits,int count){
     string curr="",result;
+    string str=performDES_Decryption(cipherText);
     for(int i=0;i<count;i++)curr+=cipherbits[i];
     for(int i=0;i<count;i++){
         string currStr="";
         for(int j=0;j<64;j+=8){
             string currBits=bitArr[i].substr(j,8);
-            char ch = (char)bitset<8>(currBits).to_ulong();
+            char ch=(char)bitset<8>(currBits).to_ulong();
             currStr+=ch;
         }
         result+=currStr;
