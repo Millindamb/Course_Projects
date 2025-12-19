@@ -47,7 +47,7 @@ void ConvertToBits(string arr[],int& count,string* &bitArr){
     for(int k=L;k<8;k++)arr[count-1]+=Padding[k-L];
 	bitArr=new string[count];
 	for(int i=0;i<count;i++){
-		string bits = "";
+		string bits="";
 		for(char c:arr[i]) {
         	bits+=bitset<8>(c).to_string();
     	}
@@ -114,7 +114,7 @@ void keyVerification(string& key){
             key+=Padding[k-L];
         }
 	}
-	string keyBits = "";
+	string keyBits="";
 	for(char c:key) {
     	keyBits+=bitset<8>(c).to_string();
     }
@@ -291,7 +291,7 @@ string performRounds(string& currBits){
         }
 		roundNo++;
 	}
-	return right + left;
+	return right+left;
 }
 
 
@@ -361,7 +361,7 @@ string ConvertBitsToText(string& bits){
     for(int i=0;i<64;i+=8){
         string byte=bits.substr(i,8);
         char ch=(char)bitset<8>(byte).to_ulong();
-        result += ch;
+        result+=ch;
     }
     return result;
 }
