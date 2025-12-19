@@ -43,7 +43,6 @@ void removeSpace(string msg,string* &arr,int& count){
 void ConvertToBits(string arr[],int& count,string* &bitArr){
 	string Padding="TUVWXYZ";
     pad=8-arr[count-1].size();
-    cout<<"padding is : "<<pad<<endl;
     int L=arr[count-1].length();
     for(int k=L;k<8;k++)arr[count-1]+=Padding[k-L];
 	bitArr=new string[count];
@@ -350,6 +349,7 @@ string performRounds_Decryption(string& currBits){
 }
 
 string performDES_Decryption(string& cipherBits){
+    if(cipherBits=="")return "";
     string step1=initialPermutation(cipherBits);
     string step2=performRounds_Decryption(step1);
     string step3=finalPermutation(step2);
@@ -368,8 +368,8 @@ string ConvertBitsToText(string& bits){
 
 
 string DES_decryption(string& cipherText,string* &bitArr,string* &cipherbits,int count){
-    string curr="",result;
-    string str=performDES_Decryption(cipherText);
+    string curr="",result,Cipherbits="";
+    string str=performDES_Decryption(Cipherbits);
     for(int i=0;i<count;i++)curr+=cipherbits[i];
     for(int i=0;i<count;i++){
         string currStr="";
@@ -389,19 +389,26 @@ string DES_decryption(string& cipherText,string* &bitArr,string* &cipherbits,int
 int main(){
     int count=0;
 	string msg="",key="",Ent,result,result2,*cipherBits,*bitArr;
-	cout<<"Enter the Massage: ";
+    cout<<"===== DES (Data Encryption Standard) =====\n";
+	cout<<"Enter the Massage Below.\n>";
     getline(cin,msg);
-	cout<<"Enter the Key: ";
+	cout<<"Enter the Key Below.\n>";
 	cin>>key;
+    cout<<"=================================\n\n";
 
 	DES(count,bitArr,msg,key,result,result2,cipherBits);
     cout<<"===== DES Encryption Output =====\n";
     cout<<"Cipher Text (Raw Characters):\n";
-    cout<<result<<endl;
+    cout<<result<<endl<<endl;
 
-    cout<<"Cipher Text(Hexadecimal Representation):\n";
-    cout<<result2<<endl;
+    cout<<"Cipher Text (Hexadecimal Representation):\n";
+    cout<<result2<<endl<<endl;
 
+    cout<<"Key Used for Encryption : ";
+    cout<<key<<endl;
+    cout<<"=================================\n\n";
+
+    cout<<"===== DES Encryption Output =====\n";
+    cout<<DES_decryption(result,bitArr,cipherBits,count)<<endl;
     cout<<"=================================\n";
-    cout<<DES_decryption(result,bitArr,cipherBits,count);
 }
