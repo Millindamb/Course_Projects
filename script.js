@@ -87,7 +87,6 @@ class DESCryptoService{
     }
 }
 
-
 class SteganographyService{
     static DELIMITER="1111111111111110";
 
@@ -156,7 +155,6 @@ class SteganographyService{
     }
 }
 
-
 class EncryptionApp{
     constructor(){
         this.selectedImage=null;
@@ -190,7 +188,7 @@ class EncryptionApp{
         this.img2=document.querySelector('.image2');
         this.img3=document.querySelector('.image3');
         this.uploadbox=document.querySelector('.upload-box');
-        this.uploadTxt=document.querySelector('.image p:nth-of-type(2)');// Second p tag
+        this.uploadTxt=document.querySelector('.image p:nth-of-type(2)');
         this.uploadInput=document.getElementById("imageUpload");
         this.uploadInput2=document.getElementById("imageUploadDec");
         this.encryptionBtn=document.querySelector(".EncBtn");
@@ -358,9 +356,6 @@ class EncryptionApp{
             
             this.resultImage.src="";
             this.resultImage.style.display="none";
-            
-            const oldLink=document.querySelector('.download-link');
-            if(oldLink) oldLink.remove();
 
             const cipherBin=this.desCrypto.encrypt(text,key);
             
@@ -460,49 +455,8 @@ class EncryptionApp{
     }
 }
 
-
 document.addEventListener('DOMContentLoaded',() =>{
     const app=new EncryptionApp();
     const style=document.createElement('style');
-    style.textContent=`
-        .uploaded-preview{
-            display: block;
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 15px;
-            border-radius: 10px;
-            border: 2px solid #3f51b5;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        
-        .download-link:hover{
-            background-color: #45a049 !important;
-        }
-        
-        .Result img{
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            max-width: 100%;
-            max-height: 200px;
-        }
-        
-        .result2{
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            margin-top: 10px;
-            word-wrap: break-word;
-            min-height: 60px;
-        }
-        
-        .upload-status{
-            margin-top: 10px;
-            font-size: 14px;
-            min-height: 20px;
-            color: #666;
-        }
-    `;
     document.head.appendChild(style);
 });
